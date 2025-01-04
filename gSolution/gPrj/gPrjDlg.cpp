@@ -217,29 +217,32 @@ void CgPrjDlg::OnBnClickedBtnTest()
 	int nHeight = m_pDlgImage->m_Image.GetHeight();
 	int nPitch = m_pDlgImage->m_Image.GetPitch();
 
-	memset(fm, 0xff, nWidth * nHeight);
+	memset(fm, 0, nWidth * nHeight);
 
-	for (size_t k = 0; k < 100; k++)
+	for (size_t k = 0; k < MAX_POINT; k++)
 	{
 		int x = rand() % nWidth;
 		int y = rand() % nHeight;
-		fm[y * nPitch + x] = 0;
+		fm[y * nPitch + x] = rand()%0xff;
 	}
 
 	
 	int nIndex = 0;
+	int nTh = 100;
 	for (size_t j = 0; j < nHeight; j++)
 	{
 		for (size_t i = 0; i < nWidth; i++)
 		{
-			if (fm[j * nPitch + i] == 0)
+			if (fm[j * nPitch + i] > nTh)
 			{
-				if (m_pDlgImage->m_nDataCount <= 100)
+				if (m_pDlgImgResult->m_nDataCount < MAX_POINT)
 				{
-					nIndex = m_pDlgImgResult->m_nDataCount;
+					cout << nIndex << ":" << i << "," << j << endl;
+
+					//nIndex = m_pDlgImgResult->m_nDataCount;
 					m_pDlgImgResult->m_ptData[nIndex].x = i;
 					m_pDlgImgResult->m_ptData[nIndex].y = j;
-					m_pDlgImgResult->m_nDataCount = ++nIndex;
+					m_pDlgImgResult->m_nDataCount = ++nIndex;					
 				}
 			}
 		}

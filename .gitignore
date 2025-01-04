@@ -1,3 +1,9 @@
 *.VC.*
 x64/
 ipch
+
+gSolution/.vs/gSolution/FileContentIndex/427e7745-0972-474c-97c9-4b57c564f949.vsidx
+gSolution/.vs/gSolution/FileContentIndex/82aad41b-c8c6-47d1-841e-3a5483907bab.vsidx
+gSolution/.vs/gSolution/FileContentIndex/b188109e-dcee-45e1-95e7-33d4c3a058d1.vsidx
+gSolution/.vs/gSolution/v17/DocumentLayout.backup.json
+gSolution/.vs/gSolution/v17/DocumentLayout.json
