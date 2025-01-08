@@ -61,6 +61,8 @@ END_MESSAGE_MAP()
 
 CgPrjDlg::CgPrjDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_GPRJ_DIALOG, pParent)
+	, m_nRadiusClickCircle(4)
+	, m_nCircleThickness(2)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -69,6 +71,8 @@ CgPrjDlg::CgPrjDlg(CWnd* pParent /*=nullptr*/)
 void CgPrjDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_EDIT_RADIUS_CLICK_CIRCLE, m_nRadiusClickCircle);
+	DDX_Text(pDX, IDC_EDIT_CIRCLE_THICKNESS, m_nCircleThickness);
 }
 
 BEGIN_MESSAGE_MAP(CgPrjDlg, CDialogEx)
@@ -77,6 +81,15 @@ BEGIN_MESSAGE_MAP(CgPrjDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()	
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_BTN_TEST, &CgPrjDlg::OnBnClickedBtnTest)
+	ON_BN_CLICKED(IDC_BTN_PROCESS, &CgPrjDlg::OnBnClickedBtnProcess)
+	ON_BN_CLICKED(IDC_BTN_MAKE_PATTERN, &CgPrjDlg::OnBnClickedBtnMakePattern)
+	ON_BN_CLICKED(IDC_BTN_GET_DATA, &CgPrjDlg::OnBnClickedBtnGetData)
+	ON_BN_CLICKED(IDC_BTN_THREAD, &CgPrjDlg::OnBnClickedBtnThread)
+	ON_BN_CLICKED(IDC_BTN_RADIUS, &CgPrjDlg::OnBnClickedBtnRadius)	
+	ON_BN_CLICKED(IDC_BTN_CIRCLE_THICKNESS, &CgPrjDlg::OnBnClickedBtnCircleThickness)	
+	ON_BN_CLICKED(IDC_BTN_INIT, &CgPrjDlg::OnBnClickedBtnInit)
+	ON_BN_CLICKED(IDC_BTN_MOVE_RANDOM, &CgPrjDlg::OnBnClickedBtnMoveRandom)	
+	ON_BN_CLICKED(IDC_BTN_THEAD_10TIMES, &CgPrjDlg::OnBnClickedBtnThead10times)
 END_MESSAGE_MAP()
 
 
@@ -113,12 +126,12 @@ BOOL CgPrjDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	MoveWindow(0, 0, 1280, 800);
-	m_pDlgImage = new CDlgImage();
+	m_pDlgImage = new CDlgImage(this);
 	m_pDlgImage->Create(IDD_CDlgImage, this);
 	m_pDlgImage->ShowWindow(SW_SHOW);
 	m_pDlgImage->MoveWindow(0, 0, 640, 480);
 
-	m_pDlgImgResult = new CDlgImage();
+	m_pDlgImgResult = new CDlgImage(this);
 	m_pDlgImgResult->Create(IDD_CDlgImage, this);
 	m_pDlgImgResult->ShowWindow(SW_SHOW);
 	m_pDlgImgResult->MoveWindow(640, 0, 640, 480);
@@ -237,7 +250,7 @@ void CgPrjDlg::OnBnClickedBtnTest()
 			{
 				if (m_pDlgImgResult->m_nDataCount < MAX_POINT)
 				{
-					cout << nIndex << ":" << i << "," << j << endl;
+					//cout << nIndex << ":" << i << "," << j << endl;
 
 					//nIndex = m_pDlgImgResult->m_nDataCount;
 					m_pDlgImgResult->m_ptData[nIndex].x = i;
@@ -252,4 +265,230 @@ void CgPrjDlg::OnBnClickedBtnTest()
 
 	m_pDlgImage->Invalidate();
 	m_pDlgImgResult->Invalidate();
+}
+
+#include "CProcess.h"
+#include <chrono>
+void CgPrjDlg::OnBnClickedBtnProcess()
+{
+	CProcess process;
+
+	auto start = std::chrono::system_clock::now();
+	int nRet = process.getStarInfo(&m_pDlgImage->m_Image, 100);
+	auto end = std::chrono::system_clock::now();
+	auto millisec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+	
+
+	cout << nRet << "\t" << millisec.count() << "ms" << endl;
+}
+
+
+void CgPrjDlg::OnBnClickedBtnMakePattern()
+{
+	unsigned char* fm = (unsigned char*)m_pDlgImage->m_Image.GetBits();
+
+	int nWidth = m_pDlgImage->m_Image.GetWidth();
+	int nHeight = m_pDlgImage->m_Image.GetHeight();
+	int nPitch = m_pDlgImage->m_Image.GetPitch();
+
+	memset(fm, 0, nWidth * nHeight);
+
+	CRect rect(100, 100, 200, 200);
+
+	for (size_t j = rect.top; j < rect.bottom; j++)
+	{
+		for (size_t i = rect.left; i < rect.right; i++)
+		{
+			fm[j * nPitch + i] = 0x81; //rand()%0xff;
+		}
+	}
+	m_pDlgImage->Invalidate();
+}
+
+
+void CgPrjDlg::OnBnClickedBtnGetData()
+{
+	unsigned char* fm = (unsigned char*)m_pDlgImage->m_Image.GetBits();
+
+	int nWidth = m_pDlgImage->m_Image.GetWidth();
+	int nHeight = m_pDlgImage->m_Image.GetHeight();
+	int nPitch = m_pDlgImage->m_Image.GetPitch();
+
+	CRect rect(0, 0, nWidth, nHeight);
+
+	int nTh = 0x80;
+	int nSumX = 0;
+	int nSumY = 0;
+	int nCount = 0;
+	for (size_t j = rect.top; j < rect.bottom; j++)
+	{
+		for (size_t i = rect.left; i < rect.right; i++)
+		{
+			if (fm[j * nPitch + i] > nTh)
+			{
+				nSumX += i;
+				nSumY += j;
+				nCount++;
+			}
+		}
+	}
+
+	double dCenterX = (double)nSumX / nCount;
+	double dCenterY = (double)nSumY / nCount;
+
+	cout << dCenterX << "\t" << dCenterY << endl;
+}
+
+
+#include <thread>
+void threadProcess(CWnd* pParent, CRect rect, int* nRet)
+{
+	CgPrjDlg* pWnd = (CgPrjDlg*)pParent;
+	*nRet = pWnd->processImg(rect);
+}
+
+
+using namespace std;
+using namespace chrono;
+void CgPrjDlg::OnBnClickedBtnThread()
+{
+	auto start = system_clock::now();
+
+	int nImgSize = 4096 * 4;
+	CRect rect(0, 0, nImgSize, nImgSize);
+	CRect rt[4];
+	int nRet[4] = { 0,0,0,0 };
+	for (size_t k = 0; k < 4; k++)
+	{
+		rt[k] = rect;
+		rt[k].OffsetRect(nImgSize * (k%2), nImgSize * (k/2));
+	}
+	
+	thread _thread0(threadProcess, this, rt[0], &nRet[0]);
+	thread _thread1(threadProcess, this, rt[1], &nRet[1]);
+	thread _thread2(threadProcess, this, rt[2], &nRet[2]);
+	thread _thread3(threadProcess, this, rt[3], &nRet[3]);
+
+	_thread0.join();
+	_thread1.join();
+	_thread2.join();
+	_thread3.join();
+
+	int nSum = 0;
+	for (size_t i = 0; i < 4; i++)
+	{
+		nSum += nRet[i];
+	}
+
+
+
+	auto end = system_clock::now();
+	auto millisec = duration_cast<milliseconds>(end - start);
+
+	cout << "main:" << nSum << "\t" << millisec.count() * 0.001 << "sec" << endl;
+}
+
+int CgPrjDlg::processImg(CRect rect)
+{
+	auto start = system_clock::now();
+
+	CProcess process;
+
+	int nRet = process.getStarInfo(&m_pDlgImage->m_Image, 0, rect);
+
+	auto end = system_clock::now();
+	auto millisec = duration_cast<milliseconds>(end - start);
+
+	cout << "thread:" << nRet << "\t" << millisec.count() * 0.001 << "sec" << endl;
+
+	return nRet;
+}
+
+
+void CgPrjDlg::OnBnClickedBtnRadius()
+{
+	UpdateData();
+
+	m_pDlgImage->ClearImage();	
+	m_pDlgImage->Invalidate(false);
+
+	m_pDlgImgResult->ClearImage();
+	m_pDlgImgResult->Invalidate(false);
+}
+
+void CgPrjDlg::OnBnClickedBtnCircleThickness()
+{
+	UpdateData();
+	m_pDlgImage->ClearImage();
+	m_pDlgImage->Invalidate(false);
+
+	m_pDlgImgResult->ClearImage();
+	m_pDlgImgResult->Invalidate(false);
+}
+
+void CgPrjDlg::OnBnClickedBtnInit()
+{
+	m_pDlgImage->ClearClick();
+	m_pDlgImage->ClearImage();
+	m_pDlgImage->Invalidate(false);
+
+	m_pDlgImgResult->ClearClick();
+	m_pDlgImgResult->ClearImage();
+	m_pDlgImgResult->Invalidate(false);
+}
+
+
+void CgPrjDlg::OnBnClickedBtnMoveRandom()
+{
+	DrawMoveRandom();
+}
+
+
+void Th10Times(CWnd* pParent)
+{
+	CgPrjDlg* pDlg = (CgPrjDlg*)pParent;	
+	pDlg->TenTimes();
+}
+
+
+void CgPrjDlg::OnBnClickedBtnThead10times()
+{	
+	thread thread10times(Th10Times, this);
+	thread10times.detach();
+}
+
+void CgPrjDlg::DrawMoveRandom()
+{
+	m_pDlgImage->ClearImage();
+	m_pDlgImage->MoveRandom();
+	m_pDlgImage->Invalidate(false);
+
+	m_pDlgImgResult->ClearImage();
+	m_pDlgImgResult->MoveRandom();
+	m_pDlgImgResult->Invalidate(false);
+}
+
+void CgPrjDlg::TenTimes()
+{
+	duration<double, std::milli> delay = 500ms;
+
+	auto start = system_clock::now();
+
+	for (size_t i = 0; i < 10*2; i++)
+	{
+		auto end = start + delay * (i+1);
+
+		//1. Draw
+		DrawMoveRandom();
+
+		//2. Check 500ms	
+		while (true)
+		{	
+			if (system_clock::now() >= end) break;
+			std::this_thread::yield();
+		}
+
+		auto millisec = duration_cast<milliseconds>(system_clock::now() - start);
+		cout << "elapsed" << i << " : " << millisec.count() * 0.001 << "sec" << endl;
+	}
 }

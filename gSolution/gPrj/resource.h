@@ -9,8 +9,22 @@
 #define IDD_CDlgImage                   103
 #define IDR_MAINFRAME                   128
 #define IDC_BUTTON_PARENT               1001
-#define IDC_BUTTON1                     1002
 #define IDC_BTN_TEST                    1002
+#define IDC_BTN_PROCESS                 1003
+#define IDC_BTN_MAKE_PATTERN            1004
+#define IDC_BTN_GET_DATA                1005
+#define IDC_BTN_THREAD                  1006
+#define IDC_EDIT_RADIUS_CLICK_CIRCLE    1007
+#define IDC_BTN_RADIUS                  1008
+#define IDC_STATIC_CLICK_POS1           1009
+#define IDC_STATIC_CLICK_POS2           1010
+#define IDC_STATIC_CLICK_POS3           1011
+#define IDC_EDIT_CIRCLE_THICKNESS       1012
+#define IDC_BTN_CIRCLE_THICKNESS        1013
+#define IDC_BTN_INIT                    1014
+#define IDC_BTN_MOVE_RANDOM             1015
+#define IDC_BTN_THEAD_2TIMES            1016
+#define IDC_BTN_THEAD_10TIMES           1016
 
 // Next default values for new objects
 // 
@@ -18,7 +32,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1003
+#define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

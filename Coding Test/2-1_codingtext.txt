@@ -1,0 +1,33 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+#define RETURN_EXCEPTION -1
+
+int solution(int n, int k) {
+    int answer = 0;
+
+    do
+    {
+        if (0 >= n || n >= 1000)
+        {
+            answer = RETURN_EXCEPTION;
+            break;
+        }
+        if (n / 10 > k || k >= 1000)
+        {
+            answer = RETURN_EXCEPTION;
+            break;
+        }
+            
+        int nValueN = 12000;
+        int nValueK = 2000;
+        int nCountService = n / 10;
+
+        answer = nValueN * n + nValueK * k - nCountService * nValueK;
+
+    } while (false);
+
+    return answer;
+}

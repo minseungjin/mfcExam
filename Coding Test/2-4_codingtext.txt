@@ -1,0 +1,93 @@
+#include <string>
+#include <vector>
+
+#include "math.h"
+
+using namespace std;
+
+
+//점 네 개의 좌표를 담은 이차원 배열  dots가 다음과 같이 매개변수로 주어집니다.
+//[[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
+//주어진 네 개의 점을 두 개씩 이었을 때, 두 직선이 평행이 되는 경우가 있으면 1을 없으면 0을 return 하도록 solution 함수를 완성해보세요.
+
+
+//dots의 길이 = 4
+//dots의 원소는[x, y] 형태이며 x, y는 정수입니다.
+//0 ≤ x, y ≤ 100
+//서로 다른 두개 이상의 점이 겹치는 경우는 없습니다.
+//두 직선이 겹치는 경우(일치하는 경우)에도 1을 return 해주세요.
+//임의의 두 점을 이은 직선이 x축 또는 y축과 평행한 경우는 주어지지 않습니다.
+
+#define LENGTH_DOTS         4
+
+#define RETURN_EXCEPTION    -1
+#define RETURN_IS_PARALLEL  1
+#define RETURN_NO_PARALLEL  0
+
+void GetLine(double dX1, double dX2, double dY1, double dY2, double* pSlope, double* pIntercept)
+{   
+    double dDx = dX2 - dX1;
+    double dDy = dY2 - dY1;
+
+    // 기울기
+    if (dDy == 0) *pSlope = 0;
+    else *pSlope = dDx / dDy;
+
+    // 절편
+    *pIntercept = dY1 - *pSlope * dX1;
+}
+
+int solution(vector<vector<int>> dots) {
+    int answer = RETURN_NO_PARALLEL;
+    
+    do
+    {
+        //dots의 길이 = 4
+        if (dots.size() != LENGTH_DOTS)
+        {
+            answer = RETURN_EXCEPTION;
+            break;
+        }
+
+        //0 ≤ x, y ≤ 100
+        for (size_t i = 0; i < dots.size(); i++)
+        {   
+            for (size_t j = 0; j < dots[i].size(); j++)
+            {
+                if (0 > dots[i][j] || dots[i][j] > 100) return RETURN_EXCEPTION;
+            }
+        }
+
+        double dSlope1 = 0;
+        double dIntercept1 = 0;
+        double dSlope2 = 0;
+        double dIntercept2 = 0;
+
+        GetLine(dots[0][0], dots[1][0], dots[0][1], dots[1][1], &dSlope1, &dIntercept1);
+        GetLine(dots[2][0], dots[3][0], dots[2][1], dots[3][1], &dSlope2, &dIntercept2);
+        if (fabs(dSlope1 - dSlope2) <= std::numeric_limits<double>::epsilon())
+        {
+            answer = RETURN_IS_PARALLEL;
+            break;
+        }
+
+        GetLine(dots[0][0], dots[2][0], dots[0][1], dots[2][1], &dSlope1, &dIntercept1);
+        GetLine(dots[1][0], dots[3][0], dots[1][1], dots[3][1], &dSlope2, &dIntercept2);
+        if (fabs(dSlope1 - dSlope2) <= std::numeric_limits<double>::epsilon())
+        {
+            answer = RETURN_IS_PARALLEL;
+            break;
+        }
+
+        GetLine(dots[0][0], dots[3][0], dots[0][1], dots[3][1], &dSlope1, &dIntercept1);
+        GetLine(dots[1][0], dots[2][0], dots[1][1], dots[2][1], &dSlope2, &dIntercept2);
+        if (fabs(dSlope1 - dSlope2) <= std::numeric_limits<double>::epsilon())
+        {
+            answer = RETURN_IS_PARALLEL;
+            break;
+        }
+    } while (false);
+    
+    
+    return answer;
+}

@@ -41,4 +41,27 @@ public:
 
 	void CallFunc(int n);
 	afx_msg void OnBnClickedBtnTest();
+	afx_msg void OnBnClickedBtnProcess();
+	afx_msg void OnBnClickedBtnMakePattern();
+	afx_msg void OnBnClickedBtnGetData();
+	afx_msg void OnBnClickedBtnThread();
+
+	int processImg(CRect rect);
+	afx_msg void OnBnClickedBtnRadius();
+
+
+	afx_msg void OnBnClickedBtnCircleThickness();
+	afx_msg void OnBnClickedBtnInit();
+	afx_msg void OnBnClickedBtnMoveRandom();	
+	afx_msg void OnBnClickedBtnThead10times();
+
+
+	//sjmin
+	int m_nRadiusClickCircle;
+	int m_nCircleThickness;
+	void TenTimes();
+
+private:
+	void DrawMoveRandom();
+	
 };
