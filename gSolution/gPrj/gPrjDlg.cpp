@@ -354,14 +354,19 @@ void CgPrjDlg::OnBnClickedBtnThread()
 {
 	auto start = system_clock::now();
 
-	int nImgSize = 4096 * 4;
-	CRect rect(0, 0, nImgSize, nImgSize);
+	int nWidth = m_pDlgImage->m_Image.GetWidth();
+	int nHeight = m_pDlgImage->m_Image.GetHeight();
+	int nPitch = m_pDlgImage->m_Image.GetPitch();
+
+	int nWidthHalf = nWidth * 0.5;
+	int nHeightHalf = nHeight * 0.5;
+	CRect rect(0, 0, nWidthHalf, nHeightHalf);
 	CRect rt[4];
 	int nRet[4] = { 0,0,0,0 };
 	for (size_t k = 0; k < 4; k++)
 	{
 		rt[k] = rect;
-		rt[k].OffsetRect(nImgSize * (k%2), nImgSize * (k/2));
+		rt[k].OffsetRect(nWidthHalf * (k%2), nHeightHalf * (k/2));
 	}
 	
 	thread _thread0(threadProcess, this, rt[0], &nRet[0]);
